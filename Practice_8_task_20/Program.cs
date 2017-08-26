@@ -112,10 +112,26 @@ namespace Practice_8_task_20
                 return true;
             else return false;
         }
-        
+
+        static void EulerСycle(int[,] mas, ref int edges, int tops, int begin)
+        {//рекурсивная функция вывода на экран эйлерова цикла
+            for (int i=0; i<edges; i++)
+            {
+                if ((mas[begin, i]==1)&&(!IsBridge(mas, i, tops, edges)))
+                {
+                    Console.Write(begin + " --> ");
+                    if (IsFirstOneInEdge(mas, tops, i, begin))
+                        begin = SecondOneInEdge(mas, tops, i);
+                    else begin = FirstOneInEdge(mas, tops, i);
+                    mas = DeleteEdge(mas, i, ref edges, tops);
+                    EulerСycle(mas, ref edges, tops, begin);
+                } 
+            }
+        }
 
         static void Main(string[] args)
         {
+
         }
     }
 }
