@@ -129,6 +129,28 @@ namespace Practice_8_task_20
             }
         }
 
+        static bool IsEulerGraph(int[,] mas, int edges, int tops)
+        {//функция, определяющая, является ли данный граф Эйлеровым
+
+            //проверка на то, нет ли в графе вершин с четной степенью или ни с чем не связанных вершин
+            for (int i = 0; i < tops; i++)
+            {
+                int g = 0;
+                for (int j = 0; j < edges; j++)
+                    if (mas[i, j] == 1) g++;
+                if ((g == 0) || (g % 2 == 1)) return false;
+            }
+
+            //проверка на то, является ли граф связанным (от нулевой вершины можно добраться до всех остальных)
+            for (int i = 1; i < tops; i++)
+            {
+                int[,] masNew = new int[tops, edges];
+                masNew = MakeMas(mas, masNew, tops, edges);
+                if (!FindWay(ref masNew, tops, edges, 0, i)) return false;
+            }
+            return true;
+        }
+
         static void Main(string[] args)
         {
 
