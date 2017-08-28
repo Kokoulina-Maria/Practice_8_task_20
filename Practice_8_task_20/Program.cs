@@ -104,8 +104,6 @@ namespace Practice_8_task_20
             int point2 = SecondOneInEdge(mas, tops, edge);
             mas = DeleteEdge(mas, edge, ref edges, tops);
 
-            int pointNow = point1;
-
             int[,] masNew = new int[tops, edges];
             masNew = MakeMas(mas, masNew, tops, edges);
             if (FindWay(ref masNew, tops, edges, point1, point2))
@@ -168,7 +166,7 @@ namespace Practice_8_task_20
             do
             {
                 Random rnd = new Random();
-                tops = rnd.Next(3, 20);
+                //tops = rnd.Next(3, 20);
                 edges = rnd.Next(tops, tops * (tops - 1) / 2);
                 mas = new int[tops, edges];
                 for (int i = 0; i < edges; i++)//заполняем матрицу случайными числами
@@ -207,7 +205,22 @@ namespace Practice_8_task_20
 
         static void Main(string[] args)
         {
-
+            Console.WriteLine("Нахождение эйлерова цикла в графе, заданном матрицей инциденций");           
+            do
+            {
+                int tops=6;
+                int edges=0;
+                int[,] mas=Generator(ref tops, ref edges);
+                Console.WriteLine("МАТРИЦА:");
+                Console.WriteLine();
+                WriteMas(mas, tops, edges);
+                Console.WriteLine();
+                Console.WriteLine("ЭЙЛЕРОВ ЦИКЛ:");
+                EulerСycle(mas, ref edges, tops, 0);
+                Console.Write("0");
+                Console.WriteLine();
+                Console.ReadLine();
+            } while (true);
         }
     }
 }
