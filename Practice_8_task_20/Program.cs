@@ -27,7 +27,7 @@ namespace Practice_8_task_20
 
         static int FirstOneInEdge(int[,] mas, int tops, int edge)
         {//находит первую единицу в столбце (первую вершину при ребре)
-            for (int i=1; i<tops; i++)
+            for (int i=0; i<tops; i++)
             {
                 if (mas[i, edge] == 1) return i;
             }
@@ -107,15 +107,18 @@ namespace Practice_8_task_20
             int[,] masNew = new int[tops, edges];
             masNew = MakeMas(mas, masNew, tops, edges);
             if (FindWay(ref masNew, tops, edges, point1, point2))
-                return true;
-            else return false;
+                return false;
+            else return true;
         }
 
         static void EulerСycle(int[,] mas, ref int edges, int tops, int begin)
         {//рекурсивная функция вывода на экран эйлерова цикла
+            int ones = 0;//переменная для подсчета количетсва ребер, исходящих из данной ввершины
+            for (int i = 0; i < edges; i++)//подсчитываем количество ребер, исходящих из данного ребра
+                if (mas[begin, i] == 1) ones++;
             for (int i=0; i<edges; i++)
             {
-                if ((mas[begin, i]==1)&&(!IsBridge(mas, i, tops, edges)))
+                if ((mas[begin, i]==1)&&((ones==1)||(!IsBridge(mas, i, tops, edges))))
                 {
                     Console.Write(begin + " --> ");
                     if (IsFirstOneInEdge(mas, tops, i, begin))
@@ -166,7 +169,7 @@ namespace Practice_8_task_20
             do
             {
                 Random rnd = new Random();
-                //tops = rnd.Next(3, 20);
+                tops = rnd.Next(4, 20);
                 edges = rnd.Next(tops, tops * (tops - 1) / 2);
                 mas = new int[tops, edges];
                 for (int i = 0; i < edges; i++)//заполняем матрицу случайными числами
@@ -193,7 +196,7 @@ namespace Practice_8_task_20
                     {
                         if ((oneFirst == FirstOneInEdge(mas, tops, j) && (oneSecond == SecondOneInEdge(mas, tops, j))))
                         {
-                            DeleteEdge(mas, j, ref edges, tops);
+                            mas=DeleteEdge(mas, j, ref edges, tops);
                             j--;
                         }
                     }
@@ -208,7 +211,7 @@ namespace Practice_8_task_20
             Console.WriteLine("Нахождение эйлерова цикла в графе, заданном матрицей инциденций");           
             do
             {
-                int tops=6;
+                int tops=0;
                 int edges=0;
                 int[,] mas=Generator(ref tops, ref edges);
                 Console.WriteLine("МАТРИЦА:");
