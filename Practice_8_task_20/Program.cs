@@ -129,8 +129,26 @@ namespace Practice_8_task_20
             }
         }
 
+        static void WriteMas(int[,] mas, int tops, int edges)
+        {//вывод матрицы интиденций на экран
+            for (int i=0; i<tops; i++)
+            {
+                Console.Write(i + " ");
+                for (int j = 0; j < edges; j++)
+                    Console.Write(mas[i, j] + " ");
+                Console.WriteLine();
+            }
+        }
         static bool IsEulerGraph(int[,] mas, int edges, int tops)
         {//функция, определяющая, является ли данный граф Эйлеровым
+
+            //проверка на то, является ли граф связанным (от нулевой вершины можно добраться до всех остальных)
+            for (int i = 1; i < tops; i++)
+            {
+                int[,] masNew = new int[tops, edges];
+                masNew = MakeMas(mas, masNew, tops, edges);
+                if (!FindWay(ref masNew, tops, edges, 0, i)) return false;
+            }
 
             //проверка на то, нет ли в графе вершин с четной степенью или ни с чем не связанных вершин
             for (int i = 0; i < tops; i++)
@@ -140,15 +158,51 @@ namespace Practice_8_task_20
                     if (mas[i, j] == 1) g++;
                 if ((g == 0) || (g % 2 == 1)) return false;
             }
-
-            //проверка на то, является ли граф связанным (от нулевой вершины можно добраться до всех остальных)
-            for (int i = 1; i < tops; i++)
-            {
-                int[,] masNew = new int[tops, edges];
-                masNew = MakeMas(mas, masNew, tops, edges);
-                if (!FindWay(ref masNew, tops, edges, 0, i)) return false;
-            }
             return true;
+        }
+
+        static int[,] Generator(ref int tops, ref int edges)
+        {//генератор эйлеровых графов
+            int[,] mas;
+            bool ok;
+            do
+            {
+                Random rnd = new Random();
+                tops = rnd.Next(3, 20);
+                edges = rnd.Next(tops, tops * (tops - 1) / 2);
+                mas = new int[tops, edges];
+                for (int i = 0; i < edges; i++)//заполняем матрицу случайными числами
+                {
+                    int oneFirst;
+                    int oneSecond;
+                    do//выбираем две вершины для единиц
+                    {
+                        oneFirst = rnd.Next(0, tops);
+                        oneSecond = rnd.Next(0, tops);
+                    } while (oneFirst == oneSecond);
+                    for (int j = 0; j < tops; j++)
+                    {
+                        if ((j == oneFirst) || (j == oneSecond)) mas[j, i] = 1;
+                        else mas[j, i] = 0;
+                    }
+                }
+                //делаем проверку на то, нет ли однаковых ребер, удаляем одно, если есть
+                for (int i = 0; i < edges; i++)
+                {
+                    int oneFirst = FirstOneInEdge(mas, tops, i);
+                    int oneSecond = SecondOneInEdge(mas, tops, i);
+                    for (int j = i + 1; j < edges; j++)
+                    {
+                        if ((oneFirst == FirstOneInEdge(mas, tops, j) && (oneSecond == SecondOneInEdge(mas, tops, j))))
+                        {
+                            DeleteEdge(mas, j, ref edges, tops);
+                            j--;
+                        }
+                    }
+                }                
+                ok = IsEulerGraph(mas, edges, tops);//проверяем, является ли граф эйлеровым
+            } while (!ok);
+            return mas;
         }
 
         static void Main(string[] args)
